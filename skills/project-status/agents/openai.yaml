@@ -1,0 +1,7 @@
+interface:
+  display_name: "Project Status"
+  short_description: "Current repo work status + durable notes"
+  default_prompt: "Use $project-status to show my open issues and PRs on this repo and plan my day."
+
+policy:
+  allow_implicit_invocation: true

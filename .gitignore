@@ -1,0 +1,17 @@
+# State never belongs in this repo -- it lives under XDG_STATE_HOME /
+# ~/.local/state/tech-founder-commands. These entries only guard against an
+# accidental local run writing into the clone.
+STATUS.md
+notes.json
+snapshot.json
+worklog.jsonl
+project.json
+.lock
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# macOS
+.DS_Store

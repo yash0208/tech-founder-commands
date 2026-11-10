@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# tfc -- tech-founder-commands launcher.
+#
+# Finds the project-status Python runner relative to this script (following
+# symlinks) and executes it with the system python3. Works from any directory,
+# and from paths containing spaces. No dependencies beyond python3 and git/gh.
+set -euo pipefail
+
+# Resolve this script's real directory, following symlinks (portable; no
+# `readlink -f`, which is absent on macOS).
+src="${BASH_SOURCE[0]}"
+while [ -h "$src" ]; do
+  dir="$(cd -P "$(dirname "$src")" >/dev/null 2>&1 && pwd)"
+  src="$(readlink "$src")"
+  [[ "$src" != /* ]] && src="$dir/$src"
+done
+here="$(cd -P "$(dirname "$src")" >/dev/null 2>&1 && pwd)"
+
+runner="$here/../lib/tfc_status.py"
+if [ ! -f "$runner" ]; then
+  # Installed layout: launcher and lib may sit side by side under a data dir.
+  alt="$here/lib/tfc_status.py"
+  if [ -f "$alt" ]; then
+    runner="$alt"
+  else
+    echo "tfc: cannot find tfc_status.py near $here" >&2
+    exit 1
+  fi
+fi
+
+py="${TFC_PYTHON:-python3}"
+if ! command -v "$py" >/dev/null 2>&1; then
+  echo "tfc: python3 not found on PATH (set TFC_PYTHON to override)" >&2
+  exit 1
+fi
+
+# -I: isolated mode, so nothing in the cwd can shadow stdlib imports.
+exec "$py" -I "$runner" "$@"
